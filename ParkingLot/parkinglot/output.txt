@@ -1,0 +1,76 @@
+Command: python manage.py create_parking_lot 6  
+Slot with number 1 already exists
+Slot with number 2 already exists
+Slot with number 3 already exists
+Slot with number 4 already exists
+Slot with number 5 already exists
+Slot with number 6 already exists
+Created a parking lot with 6 slots
+
+
+Command: python manage.py park KA-01-HH-1234 White  
+KA-01-HH-1234 | White is already parked!
+
+
+Command: python manage.py park KA-01-HH-9999 White  
+KA-01-HH-9999 | White is already parked!
+
+
+Command: python manage.py park KA-01-BB-0001 Black  
+KA-01-BB-0001 | Black is parked in slot 3
+
+
+Command: python manage.py park KA-01-HH-7777 Red  
+KA-01-HH-7777 | Red is parked in slot 4
+
+
+Command: python manage.py park KA-01-HH-2701 Blue  
+KA-01-HH-2701 | Blue is parked in slot 5
+
+
+Command: python manage.py park KA-01-HH-3141 Black  
+KA-01-HH-3141 | Black is parked in slot 6
+
+
+Command: python manage.py leave 4  
+Car KA-01-HH-7777 | Red has left the parking, slot 4
+
+
+Command: python manage.py status  
+Slot Number, Car Registration Number, Colour
+1, KA-01-HH-1234, White
+2, KA-01-HH-9999, White
+3, KA-01-BB-0001, Black
+4, -, -
+5, KA-01-HH-2701, Blue
+6, KA-01-HH-3141, Black
+
+
+Command: python manage.py park KA-01-P-333 White  
+KA-01-P-333 | White is parked in slot 4
+
+
+Command: python manage.py park DL-12-AA-9999 White  
+No Empty Slots available!
+
+
+Command: python manage.py registration_numbers_for_cars_with_colour White  
+KA-01-HH-1234
+KA-01-HH-9999
+KA-01-P-333
+
+
+Command: python manage.py slot_numbers_for_cars_with_colour White  
+1
+2
+4
+
+
+Command: python manage.py slot_number_for_registration_number KA-01-HH-3141  
+6
+
+
+Command: python manage.py slot_number_for_registration_number MH-04-AY-1111  
+Not found!
+
+
