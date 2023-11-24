@@ -1,0 +1,29 @@
+@startuml Decorator
+
+class BasePizza {
+    cost()
+}
+
+class Margherita {
+    cost()
+}
+
+class VeggieDelight {
+    cost()
+}
+class Toppings {
+    + BasePizza Pizza
+    + cost()
+}
+BasePizza <|-- VeggieDelight
+BasePizza <|-- Margherita
+
+
+Toppings <|-- ExtraChesse
+Toppings <|-- Mushroom
+BasePizza <|-- Toppings
+BasePizza <|.. Toppings
+
+
+
+@enduml

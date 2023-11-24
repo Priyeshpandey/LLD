@@ -1,0 +1,200 @@
+# Problem Statement and Requirements
+1. Design a Cab Booking Application
+2. select source and destination location : x, y cooardinates in a 2D plain : Done
+3. distance of driver to rider is defined by straight-line eucleadin distance between them. : Done
+4. Booking request should be created by Rider. : Done
+5. No ride sharing : Done
+6. Driver nearby rider (MAX distance) should be notified of the request. : NotImplemented // Cab is selected automatically if it is available and a ride is created
+7. A Driver may accept/reject the request. : NotImplemented : Driver has no choice of accepting/rejecting a ride.
+8. Driver will see following Ride info: NotImplemented
+    -> Rider location and distance from Driver and ETA.
+    -> Rider's Name and Rating
+    -> Ride Cost
+    -> Destination of the Ride Distance(in KM) and ETA
+9. A TimeOut before Driver could accept the request. : NotImplemenented
+10. A TimeOut for Rider to wait till someone accept their request. : NotImplemented
+11. A Rider can choose to CANCEL request, while : Cancellation not allowed
+    -> requesting the ride.
+    -> after accepting the ride.
+    -> before starting the journey.
+    -> cancellation shoud not be allowed after journey has started.
+12. Driver should have an option to END RIDE once they reach the destination/ or upon Rider's request. : DriverSide not IMplemented
+13. Allow Rider to raise END RIDE request from App. : Nope
+14. A Ride can only end before destination arival if both parties mutually agrees. : Nope
+        i.e Rider raise END RIDE request and Driver accepts it.
+15. Location sharing : Nope
+16. Emergency SOS notification to saved contacts. : Nope
+    -> Date
+    -> Time
+    -> Location
+    -> Cab Reg Number
+    -> Driver's Profile
+------------------------------------------------------------------------------------------------------
+Problem Statement:
+We want to build a cab booking platform to allow a rider to book a cab.
+
+Details:
+The location is represented as a (x, y) coordinate.
+Distance between two points (x1, y1) and(x2, y2) is sqrt((x1-x2)^2 + (y1-y2)^2)
+Platform has decided upon maximum distance a driver has to travel to pickup a rider.
+A cab has only 1 driver.
+Sharing of cab is not allowed between riders
+There is a single type of cab
+Please build an application that exposes following features to riders and drivers.
+
+Register a rider.
+Register a driver/cab
+Update a cab's location
+A driver can switch on/off his availability
+A rider can book a cab
+Fetch history of all rides taken by a rider.
+End the Trip
+
+@startuml CabBooking
+
+class User{
+    id: string
+    name: string
+}
+
+class Rider {
+    - user: User
+    - id: string    
+}
+
+class Cab {
+    - user: User
+    - id: string
+    - trip: Trip
+    - location: Location
+    - availability: bool
+}
+
+class Trip{
+    - id: string
+    - start: datetime
+    - end: datetime
+    - cab: Cab
+    - rider: Rider
+    - source: Location
+    - destination: Location
+    - price: Decimal
+    - status: Enum{INPROGRESS, FINISHED}
+    ---
+    + end_ride() // Cab reached destination and ride is done.
+}
+
+class Location {
+    - posX: int
+    - posY: int
+    ---
+    distance(to_pos: Location) -> Decimal
+}
+
+User <|.. Rider
+User <|.. Cab
+Trip <|.. Cab
+Location <|.. Cab
+Cab <|.. Trip
+Rider <|.. Trip
+Location <|.. Trip
+
+class CabsMangerService {
+    - cabs: Dict[string, Cab]
+    ---
+    + add_cab(cab: Cab)
+    + get_cab(cab_id: string) -> Cab
+    + update_cab_location(cab_id: string, location: Location)
+    + update_cab_availability(cab_id: string, availability: bool)
+    + get_nearby_cabs(source: Location, distance: Decimal) -> List[Cab]
+}
+
+class RidersManagerService {
+    - riders: Dict[string, Rider]
+    ---
+    + add_rider(rider_id: string)
+    + get_rider(rider_id: string) -> Rider
+}
+
+class TripsManagerService {
+    + MAX_ALLOWED_TRIP_MATCHING_DISTANCE = 10.0
+    - trips: Dict[string, List[Trip]] // key: rider_id
+    - cabs_manager: CabsMangerService
+    - riders_manager: RidersManagerService
+    - cab_matching_strategy: ICabsMatchingStrategy
+    - pricing_strategy: IPricingStrategy
+    ---
+    + create_trip(rider: Rider, source: Location, destination: Location)
+    + get_trip_history(rider: Rider) -> List[Trip]
+    + end_trip(cab: Cab) // marks the trip ended and unsets current trip of that cab
+}
+
+Cab <|.. CabsMangerService
+Rider <|.. RidersManagerService
+CabsMangerService <|.. TripsManagerService
+RidersManagerService <|.. TripsManagerService
+ICabsMatchingStrategy <|.. TripsManagerService
+IPricingStrategy <|.. TripsManagerService
+ICabsMatchingStrategy <|-- DefaultCabMatchingStrategy
+IPricingStrategy <|-- DefaultPricingStrategy
+
+
+class CabsController {
+    - cabs_manager: CabsMangerService
+    - trips_manager: TripsManagerService
+    ---
+    + register_cab(driver_user_id: string)
+    + update_cab_location(cab_id: string, x: Decimal, y:Decimal)
+    + update_cab_availability(cab_id: string, availabl: bool)
+    + update_cab_end_trip(cab_id: string)
+}
+
+CabsMangerService <|.. CabsController
+TripsManagerService <|.. CabsController
+
+class RidersController {
+    - riders_manager: RidersManagerService
+    - trips_manager: TripsManagerService
+    ---
+    + register_rider(rider_user_id: string)
+    + book_ride(rider_id: string, src_x: Decimal, src_y: Decimal, dest_x: Decimal, dest_y: Decimal)
+    + get_bookings(rider_id: string)
+}
+@enduml
+
+Flow1:
+Rider Books a Ride
+input: rider_id, source, destination
+call: book_ride -> create_trip -> get_close_by_cabs
+                                -> get_available_cabs
+                                -> select_cab -> cab_matching_strategy.match_cab_to_rider
+                                -> get_price -> pricing_strategy.get_price
+                                -> create_new_trip
+                                -> set_current_trip_of_cab = current_trip
+
+                                Response {
+                                    rider,
+                                    source,
+                                    destination,
+                                    price,
+                                    cab
+                                }
+
+# Important Missing Features to be Designed
+1. Cancellation Capability for Rider
+2. Cancellation Capability for Driver
+3. Payments
+4. Notification : **
+5. Timeout Rider's end
+6. Timeout Driver's end
+7. capability for driver to accept/reject a request. : **
+
+
+# Additional good to have features
+8. Cab Types and Pricing: Basic, Economy, Premium, VIP
+9. Dynamic Pricing: Based on Demand
+10. Rating for Rider and Driver
+11. Security for Passenger and Driver
+12. Emergency SOS
+13. what else?
+

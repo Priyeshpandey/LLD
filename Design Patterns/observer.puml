@@ -1,0 +1,35 @@
+@startuml ObserverPattern
+
+class IObserver {
+    update()
+}
+
+class TVDisplay{
+    update()
+}
+
+class MobileDisplay{
+    update()
+}
+
+class IObservable{
+    add()
+    remove()
+    notify()
+    set_data()
+    get_data()
+}
+
+
+IObserver <|... TVDisplay
+IObserver <|... MobileDisplay
+
+IObservable <|... ConcreteObservable1
+IObservable <|... ConcreteObservable2
+
+ConcreteObservable1 -- TVDisplay
+ConcreteObservable1 -- MobileDisplay
+ConcreteObservable2 -- TVDisplay
+ConcreteObservable2 -- MobileDisplay
+
+@enduml

@@ -1,0 +1,19 @@
+# Tower Research Capital Experience
+=====================================================
+Portal - A web app written in Python and uses Django Framework.
+
+It contains a collection of apps which are as follows:
+caldb - A calendar app, to manage leaves, holidays, create change freeze events.
+
+circuitdb - A database referential for all the circuit paths in the tower network.
+hwdb - A database referential for all the Hardwares managed by Tower.
+hrdb - A Hiring Management APP much like Oracle HCM Cloud.
+servicedb - App for creating service request for various type of service offerings like, Travel, Seat Movement, Server Provisioning, Operations etc.
+netdb - A database referential for network devices present in the network and its related interface.
+Chargebackdb - App to calculate charges for usages like network bandwidth, circuit, hardware usage etc.
+====================================================================================
+Responsible for design and development of Python/Django powered app called Portal, widely used in the Org for management of a host of application including but not limited to circuit usages and billing, network bandwidth usage calculation, hardware usage and billing, handling service requests for a host of offerings like, Hardware procurement, Server Provisioning, etc.
+
+
+
+

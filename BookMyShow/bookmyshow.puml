@@ -1,0 +1,93 @@
+@startuml BookMyShow
+class Theatre {
+    - id: string
+    - name: string
+    - screens: List[Screen]
+    ---
+    + add_screen(screen: Screen)
+}
+
+class Screen {
+    - id: string
+    - name: string
+    - theatre: Theatre
+    - seats: List[Seat]
+    ---
+    + add_seat(seat: Seat)
+}
+
+class Seat {
+    - id: string
+    - row: int
+    - col: int
+}
+
+class Movie {
+    - id: string
+    - name: string
+}
+
+class Show {
+    - id: string
+    - screen: Screen
+    - movie: Movie
+    - start: datetime
+    - duration_in_seconds: int
+}
+
+class SeatLock {
+    - seat: Seat
+    - show: Show
+    - timeout_in_seconds: int
+    - lock_time: datetime
+    - locked_by: string // User ID
+    ---
+    + is_lock_expired() -> bool
+}
+
+Theatre <|.. Screen
+Screen <|.. Theatre
+Screen <|.. Seat
+Show <|.. Screen
+Show <|.. Movie
+SeatLock <|.. Seat
+SeatLock <|.. Show
+
+class TheatreService {
+    - theatres: Dict[string, Theatre]
+    - screens: Dict[string, Screen]
+    - seats: Dict[string, Seat]
+    ---
+    + get_seat(seat_id: string) -> Seat
+    + get_theatre(theatre_id: string) -> Theatre
+    + get_screen(screen_id: string) -> Screen
+    + create_theatre(name: string) -> Theatre
+    + create_screen_in_theatre(theatre_id: string, screen_name: string) -> Screen
+    + create_seat_in_screen(screen_id: string, row: int, col: int) -> Seat
+    + create_screen(screen_name: string) -> Screen
+}
+
+class MovieService{}
+class BookingService{}
+class PaymentsService{}
+class SeatAvailabilityService{}
+class ShowService{}
+class TheatreService{}
+
+BookingController <|.. BookingService
+BookingController <|.. ShowService
+BookingController <|.. TheatreService
+
+MovieController <|.. MovieService
+
+PaymentsController <|.. PaymentsService
+PaymentsController <|.. BookingService
+
+ShowController <|.. SeatAvailabilityService
+ShowController <|.. ShowService
+ShowController <|.. TheatreService
+ShowController <|.. MovieService
+
+TheatreController <|.. TheatreService
+
+@enduml
